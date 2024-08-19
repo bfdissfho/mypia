@@ -7,6 +7,8 @@
 // @match        https://sell.pia.jp/inbound/selectTicket.php?eventCd=*
 // @match        https://sell.pia.jp/inbound/selectTicket.php?action=*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=pia.jp
+// @updateURL    https://raw.githubusercontent.com/bfdissfho/mypia/main/buy
+// @downloadURL  hhttps://raw.githubusercontent.com/bfdissfho/mypia/main/buy
 // @grant        none
 // ==/UserScript==
 
