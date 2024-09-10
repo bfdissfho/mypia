@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         pia sumo wrestling
+// @name         pia buy
 // @namespace    http://tampermonkey.net/
-// @version      2024-02-11
+// @version      2024-09-10
 // @description  try to take over the world!
 // @author       You
 // @match        https://sell.pia.jp/inbound/selectTicket.php?eventCd=*
@@ -13,28 +13,37 @@
 // ==/UserScript==
 
 (function() {
-    'use strict';
-    var want_date = 1
-    var want_quan = "6"
+
+    var want_quan = "4";
+
+    function refresh() {
+        let exist_element = document.querySelector(".titleBar");
+        if (exist_element) {
+            clearInterval(check_element);
+            // Call the functions after clearing the interval
+            setTimeout(select_date, 100);
+            setTimeout(selectRandomStockItem, 100);
+            setTimeout(select_quan, 100);
+        } else {
+            location.reload();
+        }
+    }
 
     function select_date() {
         let selectdate = document.getElementById('insPerformCode');
         if (selectdate) {
-            const options = selectdate.options;
-            if (want_date >= 0 && want_date < options.length) {
-                selectdate.selectedIndex = want_date;
-
-                // Dispatch the change event using different methods
-                if ('createEvent' in document) {
-                    const changeEvent = document.createEvent('Event');
-                    changeEvent.initEvent('change', true, true);
-                    selectdate.dispatchEvent(changeEvent);
-                }
+            const options = Array.from(selectdate.options).filter(option => option.value); // Filter out empty value options
+            if (options.length > 0) { // Ensure there are valid options
+                // Generate a random index between 0 and options.length - 1
+                const randomIndex = Math.floor(Math.random() * options.length);
+                selectdate.selectedIndex = selectdate.options.selectedIndex === 0 ? randomIndex + 1 : randomIndex; // Adjust if the first option is selected
+                const changeEvent = new Event('change', { bubbles: true });
+                selectdate.dispatchEvent(changeEvent);
             }
         }
     }
 
-    function click_next(){
+    function click_next() {
         let next_btn = document.getElementById('linkNext');
         let selectdate = document.getElementById('insPerformCode');
         let clickEvent = new MouseEvent('click', {
@@ -43,56 +52,43 @@
             view: window
         });
         if (next_btn && selectdate) {
-            console.log("123")
+            console.log("123");
             next_btn.dispatchEvent(clickEvent);
         }
     }
 
-    // Function to select the last available stock item (excluding disabled and "It remains and small")
-    function selectLastStockItem() {
-        var targetNode = document.querySelector('body'); // Select the appropriate target node
-
-        var observer = new MutationObserver(function (mutationsList, observer) {
-            // Check for the desired stock item when mutations occur
+    function selectRandomStockItem() {
+        var targetNode = document.querySelector('body');
+        var observer = new MutationObserver(function(mutationsList, observer) {
             for (var mutation of mutationsList) {
                 if (mutation.type === 'childList') {
                     var stockItems = document.querySelectorAll(
                         'input[type="radio"][name="insStockSK"]:not([disabled])'
                     );
-                    if (stockItems){
-                        var lastStockItem = null;
 
-                        for (var i = stockItems.length - 1; i >= 0; i--) {
-                            var stockItem = stockItems[i];
+                    if (stockItems.length) {
+                        // Filter stock items to ensure they meet both conditions
+                        var validStockItems = Array.from(stockItems).filter(stockItem => {
                             var stockItemImage = stockItem.previousElementSibling;
+                            var stockItemLabel = stockItem.closest('label'); // Get the closest label
+                            return !(stockItemImage && stockItemImage.tagName === 'IMG' && stockItemImage.alt === 'stock exists') &&
+                                stockItemLabel &&
+                                !stockItemLabel.textContent.includes('GOLD BOX');
+                        });
 
-                            if (
-                                stockItemImage &&
-                                stockItemImage.tagName === 'IMG' &&
-                                stockItemImage.alt !== 'stock exists'
-                            ) {
-                                continue; // Skip "It remains and small" stock items
-                            }
+                        // Randomly select a stock item from the valid items
+                        if (validStockItems.length > 0) {
+                            var randomIndex = Math.floor(Math.random() * validStockItems.length);
+                            var randomStockItem = validStockItems[randomIndex];
+                            randomStockItem.checked = true;
 
-                            lastStockItem = stockItem;
-                            break;
-                        }
-
-                        if (lastStockItem) {
-                            lastStockItem.checked = true;
-                            console.log("111");
-
-                            // Create a new change event
                             var clickEvent = new MouseEvent('click', {
                                 view: window,
                                 bubbles: true,
                                 cancelable: true,
                             });
-
-                            // Dispatch the change event on the last stock item
-                            lastStockItem.dispatchEvent(clickEvent);
-
-                            observer.disconnect(); // Stop observing once the stock item is selected
+                            randomStockItem.dispatchEvent(clickEvent);
+                            observer.disconnect();
                         }
                     }
                 }
@@ -103,51 +99,29 @@
         observer.observe(targetNode, observerConfig);
     }
 
-
-    // Function to click the next label
-    function clickNextLabel() {
-        var nextLabelButton = document.getElementById('next-label-button'); // Replace 'next-label-button' with the ID or selector of your next label button
-        nextLabelButton.click();
-    }
-
     function select_quan() {
-        var targetNode = document.querySelector('body'); // Select the appropriate target node
-
-        var observer = new MutationObserver(function (mutationsList, observer) {
-            // Check for the select element when mutations occur
+        var targetNode = document.querySelector('body');
+        var observer = new MutationObserver(function(mutationsList, observer) {
             for (var mutation of mutationsList) {
                 if (mutation.type === 'childList') {
                     var quan = document.querySelector('select[name*="insSaleSK"]');
                     if (quan) {
                         quan.value = want_quan;
-
-                        // Create a new MouseEvent with the appropriate properties
                         var clickEvent = new MouseEvent('click', {
                             view: window,
                             bubbles: true,
                             cancelable: true,
                         });
-
-                        // Dispatch the click event on the select element
                         quan.dispatchEvent(clickEvent);
-
-                        observer.disconnect(); // Stop observing once the select element is found and updated
+                        observer.disconnect();
                         click_next();
                     }
                 }
             }
         });
-
         var observerConfig = { childList: true, subtree: true };
         observer.observe(targetNode, observerConfig);
-
     }
 
-    setTimeout(select_date, 100);
-    setTimeout(selectLastStockItem, 100);
-    setTimeout(select_quan, 100);
-    //setTimeout(click_next, 3500);
-
-
-
+    const check_element = setInterval(refresh, 2000);
 })();
