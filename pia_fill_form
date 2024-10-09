@@ -1,0 +1,84 @@
+// ==UserScript==
+// @name         pia fill form
+// @namespace    http://tampermonkey.net/
+// @version      2024-02-11
+// @description  try to take over the world!
+// @author       You
+// @match        https://sell.pia.jp/inbound/selectTicket.php?eventCd=*
+// @match        https://sell.pia.jp/inbound/selectTicket.php?action=*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=pia.jp
+// @updateURL
+// @downloadURL
+// @grant        none
+// ==/UserScript==
+
+(function() {
+
+
+    function fillUserInfo() {
+        // Find first name input
+        const firstNameInput = document.getElementById('insFirstNameNative');
+
+        if (firstNameInput) {
+            const phoneInput = document.getElementById('insPhoneNumber');
+            const familyNameInput = document.getElementById('insFamilyNameNative');
+            const maleRadio = document.querySelector('input[name="insSex"][value="1"]');
+            const monthSelect = document.getElementById('insBirthDayMonth');
+            const daySelect = document.getElementById('insBirthDayDate');
+            const yearInput = document.querySelector('input[name="insBirthDayYear"]');
+            const countrySelect = document.getElementById('insCountry');
+            const emailInput = document.getElementById('insMailAddress');
+            const emailChkInput = document.getElementById('insMailAddressChk');
+
+
+
+
+
+
+
+
+            firstNameInput.value = "Giuseppe"; // Set first name
+            if (familyNameInput) familyNameInput.value = "Bland"; // Set family name
+            if (phoneInput) phoneInput.value = "6569416143"; // Set phone number
+            if (maleRadio) maleRadio.checked = true; // Select male
+            if (monthSelect) monthSelect.value = "04"; // Set month to April
+            if (daySelect) daySelect.value = "11"; // Set day to 11
+            if (yearInput) yearInput.value = "1960"; // Set year to 1960
+
+
+            if (countrySelect) {
+                countrySelect.value = "Other";
+                const countryOtherInput = document.getElementById('insCountryOther');
+                if (countryOtherInput) {
+                    countryOtherInput.value = "Singapore"; // Input "Singapore"
+                    countryOtherInput.disabled = false;
+                }
+            }
+
+
+            if (emailInput) {
+                emailInput.value = "abc123@hotmail.com"; // Set email
+                if (emailChkInput) emailChkInput.value = emailInput.value; // Re-enter email
+            }
+
+
+
+
+
+
+
+
+
+            const nextButton = document.getElementById('linkNext');
+            if (nextButton) {
+                nextButton.click(); // Click the button
+                console.log("Next button clicked");
+            }
+        } else {
+            console.log("First name input not found.");
+        }
+    }
+
+    setTimeout(fillUserInfo, 2000)
+
+})();
