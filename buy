@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia buy
 // @namespace    http://tampermonkey.net/
-// @version      2024-12-07
+// @version      2025-3-15
 // @description  try to take over the world!
 // @author       You
 // @match        https://sell.pia.jp/inbound/selectTicket.php?eventCd=*
