@@ -1,0 +1,20 @@
+// ==UserScript==
+// @name         entrance pia
+// @namespace    http://tampermonkey.net/
+// @version      2025-03-17
+// @description  try to take over the world!
+// @author       You
+// @match        https://entrance.pia.jp/oasis2025eng/index.php
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=pia.jp
+// @grant        none
+// ==/UserScript==
+
+(function() {
+
+    function clickbutton(){
+        document.getElementById('over18').click();
+        document.getElementById('speed_regist_enabled').click();
+    }
+
+    setTimeout(clickbutton, 1000)
+})();
