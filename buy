@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia buy
 // @namespace    http://tampermonkey.net/
-// @version      2025-3-15
+// @version      2025-5-22
 // @description  try to take over the world!
 // @author       You
 // @match        https://sell.pia.jp/inbound/selectTicket.php?eventCd=*
@@ -14,7 +14,7 @@
 
 (function() {
 
-    var want_quan = "2";
+    var want_quan = "4";
 
     function refresh() {
         let exist_element = document.querySelector(".titleBar");
