@@ -1,0 +1,164 @@
+// ==UserScript==
+// @name         pia lottery3
+// @namespace    http://tampermonkey.net/
+// @version      2025-07-19
+// @description  try to take over the world!
+// @author       You
+// @match        https://va.pia.jp/*
+// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @updateURL    https://raw.githubusercontent.com/bfdissfho/mypia/refs/heads/main/pia_fill_form3
+// @downloadURL  https://raw.githubusercontent.com/bfdissfho/mypia/refs/heads/main/pia_fill_form3
+// @grant        none
+// ==/UserScript==
+
+(function(){
+    'use strict';
+
+    // ==== 全局配置 ====
+    const desiredPerformanceText = 'Thu, Jun 04/2026 19:00 Tokyo International Forum　Hall A';
+    const seatPriorities = ['VIP Ticket','SS Seat','S Seat'];
+
+    // —— 1️⃣ 个人信息 弹窗覆盖层 ——
+    function showEntryOverlay(){
+        if(document.getElementById('entryOverlay')) return;
+        const ov = document.createElement('div'); ov.id = 'entryOverlay';
+        ov.style = `position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+            background:white; padding:20px; border:2px solid #333; z-index:100000;
+            box-shadow:0 0 10px rgba(0,0,0,0.5); font-family:sans-serif;`;
+        ov.innerHTML = `
+          <h3>📋 填写个人信息（一行 Tab 分隔）</h3>
+          <p style="font-size:90%;">格式：FirstName&lt;TAB&gt;LastName&lt;TAB&gt;Gender&lt;TAB&gt;YYYY&lt;TAB&gt;MM&lt;TAB&gt;DD&lt;TAB&gt;Phone&lt;TAB&gt;Email&lt;TAB&gt;Nationality&lt;TAB&gt;Password</p>
+          <textarea id="entryData" rows="2" cols="70"
+            placeholder="Lily\tye\tfemale\t1996\t02\t12\t85290154419\tshisitong28@yahoo.com\tHong Kong\teret491"></textarea>
+          <div style="margin-top:10px;">
+            <button id="entrySubmit">填入并关闭</button>
+            <button id="entryClose" style="margin-left:10px;">取消</button>
+          </div>
+        `;
+        document.body.appendChild(ov);
+        document.getElementById('entrySubmit').onclick = () => {
+            const parts = document.getElementById('entryData').value.trim().split('\t').map(s=>s.trim());
+            if(parts.length < 10){ alert('❌ 格式错误，需 10 项并以 Tab 分隔'); return; }
+            const [first,last,gender,yyyy,mm,dd,tel,email,nat,pwd] = parts;
+            setInput('cstmr_lnm', first);
+            setInput('cstmr_fnm', last);
+
+            // 【修正】使用 value 精準選取性別，避免覆蓋問題
+            const genderMap = { 'female': '2', 'male': '1', 'other': '8' };
+            const genderValue = genderMap[gender.toLowerCase()];
+            if (genderValue) {
+                const radio = document.querySelector(`input[name="sex_typ"][value="${genderValue}"]`);
+                if (radio) radio.checked = true;
+            }
+
+            setSelectValue('birth_yyyy', yyyy);
+            setSelectValue('birth_mm', mm);
+            setSelectValue('birth_dd', dd);
+            setInput('cmnt05', tel);
+            setInput('ml_addr', email);
+            setInput('ml_addr_cnfm', email);
+            setSelect('cmnt04', o=> o.text.trim().toLowerCase() === nat.toLowerCase());
+            setInput('gnrl_cstmr_passwd', pwd);
+            ov.remove(); clickBtn('entry2','Desired Performance(s)');
+        };
+        document.getElementById('entryClose').onclick = () => ov.remove();
+    }
+
+    // —— 2️⃣ 座位选择（支持完全匹配） ——
+    function selectSeatType(){
+        const seats = Array.from(document.querySelectorAll('input[name="hope_stk_stknd_cd"]'));
+        if(!seats.length) return false;
+        let pick = null;
+        for(const key of seatPriorities){
+            if(key.includes('*')){
+                // 星号优先，部分匹配
+                pick = seats.find(r => r.parentNode.textContent.includes(key));
+            } else {
+                // 完整匹配座位名称
+                pick = seats.find(r => {
+                    const txt = r.parentNode.textContent;
+                    const label = txt.split('-')[0].replace(/^.*:\s*/, '').trim();
+                    return label === key;
+                });
+            }
+            if(pick) break;
+        }
+        if(!pick) return false;
+        pick.checked = true;
+        clickBtn('entry4-1');
+        return true;
+    }
+
+    // —— 3️⃣ 信用卡 覆盖层 ——
+    function showCCOverlay(){
+        if(document.getElementById('ccOverlay')) return;
+        const ov = document.createElement('div'); ov.id = 'ccOverlay';
+        ov.style = `position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+            background:white; padding:20px; border:2px solid #333; z-index:100000;
+            box-shadow:0 0 10px rgba(0,0,0,0.5); font-family:sans-serif;`;
+        ov.innerHTML = `
+          <h3>📋 填写信用卡信息（Tab 分隔）</h3>
+          <textarea id="ccData" rows="4" cols="70"
+            placeholder="卡号(16位)\t月(02位)\t年(4位)\t码(3/4位)\t持卡人姓名"></textarea>
+          <div style="margin-top:10px;">
+            <button id="ccSubmit">填入并关闭</button>
+            <button id="ccClose" style="margin-left:10px;">取消</button>
+          </div>
+        `;
+        document.body.appendChild(ov);
+        document.getElementById('ccSubmit').onclick = ()=>{
+            const parts = document.getElementById('ccData').value.trim().split('\t').map(s=>s.trim());
+            // 【新增】檢查需 5 項，並解構出 holderName
+            if(parts.length < 5){ alert('❌ 格式错误，需 5 项并以 Tab 分隔'); return; }
+
+            const [no,mo,yr,sc,holderName] = parts;
+
+            setInput('stlmnt_card_no', no);
+            setSelectValue('card_trmvld_month_da', mo);
+            setInput('card_trmvld_year_da', yr);
+            setInput('scrtyCd', sc);
+
+            // 【新增】自動填入持卡人姓名
+            setInput('card_holder_name', holderName);
+
+            ov.remove(); clickBtn('entry6','Ticket Issuance of Tickets');
+        };
+        document.getElementById('ccClose').onclick = ()=> ov.remove();
+    }
+
+    // —— 主流程 ——
+    setTimeout(()=>{
+        if(document.querySelector('input[name="cstmr_lnm"]') && !document.getElementById('entryOverlay')){
+            showEntryOverlay(); return;
+        }
+        const perfs = Array.from(document.querySelectorAll('input[name="hope_event_perf_cd"]'));
+        if(perfs.length){
+            let p = perfs.find(r => r.parentNode.textContent.includes(desiredPerformanceText));
+            if(!p) return;  // 若无匹配则不点击
+            p.checked = true;
+            clickBtn('entry3'); return;
+        }
+        if(selectSeatType()) return;
+        const tc = document.querySelector('select[name="hope_numsht"]');
+        if(tc){
+            tc.value = String(Math.max(...Array.from(tc.options).map(o=>+o.value||0)));
+            clickBtn('entry5','Confirmation'); return;
+        }
+        const summary = document.querySelector('.contents_body.lightblue_back');
+        if(summary){
+            const entries = summary.querySelectorAll('dl.vertical_table.white_back.line_top');
+            if(entries.length === seatPriorities.length){
+                clickBtn('entry5','Settlement Method'); return;
+            }
+        }
+        if(clickBtn('entry5','Adding desired')) return;
+        if(document.querySelector('input[name="stlmnt_card_no"]')){ showCCOverlay(); return; }
+        if(clickBtn('entry6','Ticket Issuance of Tickets') || clickBtn('entry7','Final Confirmation')) return;
+    },2000);
+
+    // —— 辅助函数 ——
+    function setInput(name,val){ const el = document.querySelector(`input[name="${name}"]`); if(el) el.value = val; }
+    function setSelect(name,fn){ const sel = document.querySelector(`select[name="${name}"]`); if(!sel) return; const opt = Array.from(sel.options).find(fn); if(opt) sel.value = opt.value; }
+    function setSelectValue(name,val){ const sel = document.querySelector(`select[name="${name}"]`); if(sel) sel.value = val; }
+    function clickBtn(n,v){ const selector = `input[type="submit"][name="${n}"]`; const btn = Array.from(document.querySelectorAll(selector)).find(b => v ? b.value === v : true); if(btn){ btn.click(); return true; } return false; }
+})();
