@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia lottery
 // @namespace    http://tampermonkey.net/
-// @version      2025-07-19
+// @version      2026-04-17
 // @description  try to take over the world!
 // @author       You
 // @match        https://va.pia.jp/*
@@ -17,6 +17,7 @@
     // ==== 全局配置 ====
     const desiredPerformanceText = 'Thu, Jun 04/2026 19:00 Tokyo International Forum　Hall A';
     const seatPriorities = ['VIP Ticket','SS Seat','S Seat'];
+    const desiredTicketCount = '2'; // 🎟️ 新增：在此設定想要的票數
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
     function showEntryOverlay(){
@@ -141,7 +142,8 @@
         if(selectSeatType()) return;
         const tc = document.querySelector('select[name="hope_numsht"]');
         if(tc){
-            tc.value = String(Math.max(...Array.from(tc.options).map(o=>+o.value||0)));
+            // 🔄 修改為選擇自訂票數
+            tc.value = desiredTicketCount;
             clickBtn('entry5','Confirmation'); return;
         }
         const summary = document.querySelector('.contents_body.lightblue_back');
