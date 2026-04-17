@@ -6,8 +6,8 @@
 // @author       You
 // @match        https://va.pia.jp/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-// @updateURL    https://raw.githubusercontent.com/bfdissfho/mypia/refs/heads/main/pia_fill_form
-// @downloadURL  https://raw.githubusercontent.com/bfdissfho/mypia/refs/heads/main/pia_fill_form
+// @updateURL    https://raw.githubusercontent.com/bfdissfho/mypia/refs/heads/main/pia_fill_form2
+// @downloadURL  https://raw.githubusercontent.com/bfdissfho/mypia/refs/heads/main/pia_fill_form2
 // @grant        none
 // ==/UserScript==
 
