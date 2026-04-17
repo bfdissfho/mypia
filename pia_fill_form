@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name         pia lottery
 // @namespace    http://tampermonkey.net/
-// @version      2025-07-19
+// @version      2026-04-17
 // @description  try to take over the world!
 // @author       You
 // @match        https://va.pia.jp/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @updateURL    https://raw.githubusercontent.com/bfdissfho/mypia/refs/heads/main/pia_fill_form
+// @downloadURL  https://raw.githubusercontent.com/bfdissfho/mypia/refs/heads/main/pia_fill_form
 // @grant        none
 // ==/UserScript==
 
