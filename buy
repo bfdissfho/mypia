@@ -16,7 +16,7 @@
 
     // --- 設定區 ---
     const CONFIG = {
-        keywords: ["A Seat", "S Seat"], // 優先關鍵字，不分大小寫
+        keywords: ["B Reserved", "A Reserved", "S Reserved", "SS Reserved", "SILVER Reserved", "GOLD Reserved"], // 優先關鍵字，不分大小寫
         want_quan: "max",               // 設定數字 (如 "2") 或 "max" 自動選最大
         refresh_rate: 2000              // 檢查頁面頻率 (ms)
     };
