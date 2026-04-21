@@ -2,25 +2,30 @@
 // @name         pia buy
 // @namespace    http://tampermonkey.net/
 // @version      2025-07-11
-// @description  try to take over the world!
+// @description  123
 // @author       You
 // @match        https://sell.pia.jp/inbound/selectTicket.php?eventCd=*
 // @match        https://sell.pia.jp/inbound/selectTicket.php?action=*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=pia.jp
 // @updateURL    https://raw.githubusercontent.com/bfdissfho/mypia/main/buy
 // @downloadURL  https://raw.githubusercontent.com/bfdissfho/mypia/main/buy
 // @grant        none
 // ==/UserScript==
 
 (function() {
+    'use strict';
 
-    var want_quan = "6";
+    // --- 設定區 ---
+    const CONFIG = {
+        keywords: ["A Seat", "S Seat"], // 優先關鍵字，不分大小寫
+        want_quan: "max",               // 設定數字 (如 "2") 或 "max" 自動選最大
+        refresh_rate: 2000              // 檢查頁面頻率 (ms)
+    };
+    // --------------
 
     function refresh() {
         let exist_element = document.querySelector(".titleBar");
         if (exist_element) {
             clearInterval(check_element);
-            // Call the functions after clearing the interval
             setTimeout(select_date, 100);
             setTimeout(selectRandomStockItem, 100);
             setTimeout(select_quan, 100);
@@ -32,11 +37,10 @@
     function select_date() {
         let selectdate = document.getElementById('insPerformCode');
         if (selectdate) {
-            const options = Array.from(selectdate.options).filter(option => option.value); // Filter out empty value options
-            if (options.length > 0) { // Ensure there are valid options
-                // Generate a random index between 0 and options.length - 1
+            const options = Array.from(selectdate.options).filter(option => option.value);
+            if (options.length > 0) {
                 const randomIndex = Math.floor(Math.random() * options.length);
-                selectdate.selectedIndex = selectdate.options.selectedIndex === 0 ? randomIndex + 1 : randomIndex; // Adjust if the first option is selected
+                selectdate.selectedIndex = selectdate.options.selectedIndex === 0 ? randomIndex + 1 : randomIndex;
                 const changeEvent = new Event('change', { bubbles: true });
                 selectdate.dispatchEvent(changeEvent);
             }
@@ -45,83 +49,73 @@
 
     function click_next() {
         let next_btn = document.getElementById('linkNext');
-        let selectdate = document.getElementById('insPerformCode');
-        let clickEvent = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-        });
-        if (next_btn && selectdate) {
-            console.log("123");
-            next_btn.dispatchEvent(clickEvent);
+        if (next_btn) {
+            next_btn.click();
         }
     }
 
     function selectRandomStockItem() {
         var targetNode = document.querySelector('body');
         var observer = new MutationObserver(function(mutationsList, observer) {
-            for (var mutation of mutationsList) {
-                if (mutation.type === 'childList') {
-                    var stockItems = document.querySelectorAll(
-                        'input[type="radio"][name="insStockSK"]:not([disabled])'
-                    );
+            var stockItems = document.querySelectorAll('input[type="radio"][name="insStockSK"]:not([disabled])');
 
-                    if (stockItems.length) {
-                        // Filter stock items to ensure they meet both conditions
-                        var validStockItems = Array.from(stockItems).filter(stockItem => {
-                            var stockItemImage = stockItem.previousElementSibling;
-                            var stockItemLabel = stockItem.closest('label'); // Get the closest label
-                            return !(stockItemImage && stockItemImage.tagName === 'IMG' && stockItemImage.alt === 'stock exists') &&
-                                stockItemLabel &&
-                                !stockItemLabel.textContent.includes('BOX');
-                        });
+            if (stockItems.length) {
+                // 1. 過濾出有效的選項 (排除 BOX 或已售罄)
+                var validItems = Array.from(stockItems).filter(item => {
+                    var label = item.closest('label');
+                    var img = item.previousElementSibling;
+                    var isSoldOut = img && img.tagName === 'IMG' && img.alt === 'stock exists'; // 根據原 code 邏輯
+                    return !isSoldOut && label && !label.textContent.includes('BOX');
+                });
 
-                        // Randomly select a stock item from the valid items
-                        if (validStockItems.length > 0) {
-                            var randomIndex = Math.floor(Math.random() * validStockItems.length);
-                            var randomStockItem = validStockItems[randomIndex];
-                            randomStockItem.checked = true;
+                if (validItems.length > 0) {
+                    // 2. 嘗試尋找符合關鍵字的選項
+                    var keywordItems = validItems.filter(item => {
+                        var text = item.closest('label').textContent.toLowerCase();
+                        return CONFIG.keywords.some(kw => text.includes(kw.toLowerCase()));
+                    });
 
-                            var clickEvent = new MouseEvent('click', {
-                                view: window,
-                                bubbles: true,
-                                cancelable: true,
-                            });
-                            randomStockItem.dispatchEvent(clickEvent);
-                            observer.disconnect();
-                        }
-                    }
+                    // 3. 決定最終選取的對象：有關鍵字就從中選，沒有就從全部有效項隨機選
+                    var pool = keywordItems.length > 0 ? keywordItems : validItems;
+                    var selected = pool[Math.floor(Math.random() * pool.length)];
+
+                    selected.checked = true;
+                    selected.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                    observer.disconnect();
                 }
             }
         });
 
-        var observerConfig = { childList: true, subtree: true };
-        observer.observe(targetNode, observerConfig);
+        observer.observe(targetNode, { childList: true, subtree: true });
     }
 
     function select_quan() {
         var targetNode = document.querySelector('body');
         var observer = new MutationObserver(function(mutationsList, observer) {
-            for (var mutation of mutationsList) {
-                if (mutation.type === 'childList') {
-                    var quan = document.querySelector('select[name*="insSaleSK"]');
-                    if (quan) {
-                        quan.value = want_quan;
-                        var clickEvent = new MouseEvent('click', {
-                            view: window,
-                            bubbles: true,
-                            cancelable: true,
-                        });
-                        quan.dispatchEvent(clickEvent);
-                        observer.disconnect();
-                        click_next();
+            var quanSelect = document.querySelector('select[name*="insSaleSK"]');
+            if (quanSelect && quanSelect.options.length > 0) {
+                
+                if (CONFIG.want_quan === "max") {
+                    // 自動選最後一個 option (通常是最大張數)
+                    quanSelect.selectedIndex = quanSelect.options.length - 1;
+                } else {
+                    // 嘗試匹配設定的張數
+                    quanSelect.value = CONFIG.want_quan;
+                    // 如果設定的張數不存在(例如想買6張但只剩2張)，則選最大的
+                    if (quanSelect.selectedIndex === -1) {
+                         quanSelect.selectedIndex = quanSelect.options.length - 1;
                     }
                 }
+
+                quanSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                observer.disconnect();
+                
+                // 稍微延遲後點擊下一步
+                setTimeout(click_next, 200);
             }
         });
-        var observerConfig = { childList: true, subtree: true };
-        observer.observe(targetNode, observerConfig);
+        observer.observe(targetNode, { childList: true, subtree: true });
     }
 
-    const check_element = setInterval(refresh, 2000);
+    const check_element = setInterval(refresh, CONFIG.refresh_rate);
 })();
