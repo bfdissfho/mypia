@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia lottery3
 // @namespace    http://tampermonkey.net/
-// @version      2026-04-17
+// @version      2026-05-7
 // @description  try to take over the world!
 // @author       You
 // @match        https://va.pia.jp/*
@@ -17,13 +17,13 @@
     // ==========================================
     // 🎫 購票數量設定 (請在此修改你要買的張數)
     // ==========================================
-    const desiredTicketCount = '2'; 
+    const desiredTicketCount = '6';
 
     // ==========================================
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
-    const desiredPerformanceText = 'Thu, Jun 04/2026 19:00 Tokyo International Forum　Hall A';
-    const seatPriorities = ['S Seat','SS Seat','VIP Ticket',];
+    const desiredPerformanceText = 'Fri, Oct 16/2026 19:00 KANAGAWA・PIA ARENA MM';
+    const seatPriorities = ['SS Seat','A Seat','S Seat'];
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
     function showEntryOverlay(){
