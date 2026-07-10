@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia lottery3
 // @namespace    http://tampermonkey.net/
-// @version      2026-07-10-2
+// @version      2026-07-10-3
 // @description  try to take over the world!
 // @author       You
 // @match        https://va.pia.jp/*
@@ -22,7 +22,7 @@
     // ==========================================
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
-    const desiredPerformanceText = 'Thu, Jan 28/2027 Doors 16:00 / Show 18:00 【TOKYO】 Tokyo Dome';
+    const desiredPerformanceText = 'Sat, Jan 16/2027 Doors 15:00 / Show 17:00 【SAITAMA】 Belluna Dome (Seibu Dome)';
     const seatPriorities = ['B SEAT','A SEAT','S SEAT','SS SEAT'];
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
