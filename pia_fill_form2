@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia lottery2
 // @namespace    http://tampermonkey.net/
-// @version      2026-05-7
+// @version      2026-07-10
 // @description  try to take over the world!
 // @author       You
 // @match        https://va.pia.jp/*
@@ -22,8 +22,8 @@
     // ==========================================
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
-    const desiredPerformanceText = 'Fri, Oct 16/2026 19:00 KANAGAWA・PIA ARENA MM';
-    const seatPriorities = ['S Seat','A Seat','SS Seat'];
+    const desiredPerformanceText = 'Mon, Jan 04/2027 Doors 16:00 / Show 18:00 【AICHI】 Vantelin Dome Nagoya';
+    const seatPriorities = ['B SEAT','A SEAT','S SEAT','SS SEAT'];
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
     function showEntryOverlay(){
