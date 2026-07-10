@@ -22,7 +22,7 @@
     // ==========================================
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
-    const desiredPerformanceText = 'Mon, Jan 04/2027 Doors 16:00 / Show 18:00 【AICHI】 Vantelin Dome Nagoya';
+    const desiredPerformanceText = 'Thu, Jan 28/2027 Doors 16:00 / Show 18:00 【TOKYO】 Tokyo Dome';
     const seatPriorities = ['B SEAT','A SEAT','S SEAT','SS SEAT'];
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
