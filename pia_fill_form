@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia lottery
 // @namespace    http://tampermonkey.net/
-// @version      2026-7-10-3
+// @version      2026-7-11
 // @description  try to take over the world!
 // @author       You
 // @match        https://va.pia.jp/*
@@ -22,7 +22,7 @@
     // ==========================================
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
-    const desiredPerformanceText = 'Mon, Jan 11/2027 Doors 14:00 / Show 16:00 【HOKKAIDO】 Daiwa House Premist Dome (Sapporo Dome)';
+    const desiredPerformanceText = 'Tue, Jan 19/2027 Doors 16:30 / Show 18:30 【OSAKA】 Kyocera Dome Osaka';
     const seatPriorities = ['B SEAT','A SEAT','S SEAT','SS SEAT'];
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
