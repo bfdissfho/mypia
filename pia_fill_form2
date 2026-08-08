@@ -23,7 +23,7 @@
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
     const desiredPerformanceText = 'Wed, Jan 20/2027 Doors 16:30 / Show 18:30 【OSAKA】 Kyocera Dome Osaka';
-    const seatPriorities = ['S SEAT', 'A SEAT', 'SS SEAT', 'B SEAT'];
+    const seatPriorities = ['SS SEAT'];
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
     function showEntryOverlay(){
