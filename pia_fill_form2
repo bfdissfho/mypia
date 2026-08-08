@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia lottery2
 // @namespace    http://tampermonkey.net/
-// @version      2026-07-10-3
+// @version      2026-8-8
 // @description  try to take over the world!
 // @author       You
 // @match        https://va.pia.jp/*
@@ -17,13 +17,13 @@
     // ==========================================
     // 🎫 購票數量設定 (請在此修改你要買的張數)
     // ==========================================
-    const desiredTicketCount = '6';
+    const desiredTicketCount = '2';
 
     // ==========================================
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
-    const desiredPerformanceText = 'Fri, Jan 15/2027 Doors 15:30 / Show 17:30 【SAITAMA】 Belluna Dome (Seibu Dome)';
-    const seatPriorities = ['B SEAT','A SEAT','S SEAT','SS SEAT'];
+    const desiredPerformanceText = 'Wed, Jan 20/2027 Doors 16:30 / Show 18:30 【OSAKA】 Kyocera Dome Osaka';
+    const seatPriorities = ['S SEAT', 'A SEAT', 'SS SEAT', 'B SEAT'];
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
     function showEntryOverlay(){
