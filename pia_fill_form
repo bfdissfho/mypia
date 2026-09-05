@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pia lottery
 // @namespace    http://tampermonkey.net/
-// @version      2026-8-8.2
+// @version      2026-9-5
 // @description  try to take over the world!
 // @author       You
 // @match        https://va.pia.jp/*
@@ -17,13 +17,13 @@
     // ==========================================
     // 🎫 購票數量設定 (請在此修改你要買的張數)
     // ==========================================
-    const desiredTicketCount = '2';
+    const desiredTicketCount = '6';
 
     // ==========================================
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
-    const desiredPerformanceText = 'Tue, Jan 19/2027 Doors 16:30 / Show 18:30 【OSAKA】 Kyocera Dome Osaka';
-    const seatPriorities = ['SS SEAT'];
+    const desiredPerformanceText = 'Sat, Jan 30/2027 18:00 TOKYO・TOKYO DOME';
+    const seatPriorities = ['SS SEAT','S SEAT','A SEAT'];
 
 
 
