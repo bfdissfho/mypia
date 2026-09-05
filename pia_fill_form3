@@ -22,8 +22,8 @@
     // ==========================================
     // ⚙️ 其他全局配置 (場次、座位優先級)
     // ==========================================
-    const desiredPerformanceText = 'Sat, Jan 16/2027 Doors 15:00 / Show 17:00 【SAITAMA】 Belluna Dome (Seibu Dome)';
-    const seatPriorities = ['B SEAT','A SEAT','S SEAT','SS SEAT'];
+    const desiredPerformanceText = 'Tue, Feb 02/2027 19:00 TOKYO・TOKYO DOME';
+    const seatPriorities = ['SS SEAT','S SEAT','A SEAT'];
 
     // —— 1️⃣ 个人信息 弹窗覆盖层 ——
     function showEntryOverlay(){
